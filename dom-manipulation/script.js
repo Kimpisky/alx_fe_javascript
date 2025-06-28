@@ -14,6 +14,7 @@ const newQuoteTextInput = document.getElementById('newQuoteText');
 const newQuoteCategoryInput = document.getElementById('newQuoteCategory');
 const addQuoteButton = document.getElementById('addQuoteBtn');
 const messageBox = document.getElementById('messageBox');
+const quotesContainer = document.getElementById('quotesContainer');
 
 function showMessage(message, type = 'info') {
     messageBox.innerHTML = message;
@@ -73,11 +74,31 @@ function addQuote() {
 
     showMessage("Quote added successfully!", 'success');
     showRandomQuote();
+    displayAllQuotes();
 }
 
-/**
- * Initializes the "Add Quote" form functionality by attaching event listeners.
- */
+function displayAllQuotes() {
+    quotesContainer.innerHTML = '';
+
+    quotes.forEach((quote, index) => {
+        const quoteDiv = document.createElement('div');
+        quoteDiv.classList.add('bg-gray-50', 'p-4', 'rounded-lg', 'shadow-sm', 'border', 'border-gray-200', 'text-left');
+
+        const quoteP = document.createElement('p');
+        quoteP.classList.add('text-gray-700', 'font-medium', 'mb-1');
+        quoteP.innerHTML = `"${quote.text}"`;
+
+        const categorySpan = document.createElement('span');
+        categorySpan.classList.add('text-sm', 'text-gray-500', 'italic');
+        categorySpan.innerHTML = `- ${quote.category}`;
+
+        quoteDiv.appendChild(quoteP);
+        quoteDiv.appendChild(categorySpan);
+
+        quotesContainer.appendChild(quoteDiv);
+    });
+}
+
 function createAddQuoteForm() {
     addQuoteButton.addEventListener('click', addQuote);
 }
@@ -86,5 +107,6 @@ newQuoteButton.addEventListener('click', showRandomQuote);
 
 document.addEventListener('DOMContentLoaded', () => {
     showRandomQuote();
-    createAddQuoteForm(); // Call the new function to set up the form listener
+    createAddQuoteForm();
+    displayAllQuotes();
 });

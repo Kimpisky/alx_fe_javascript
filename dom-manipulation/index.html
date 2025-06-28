@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
     <title>Dynamic Quote Generator</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-purple-100 min-h-screen flex flex-col items-center justify-center p-4">
     <div class="bg-white p-8 rounded-2xl shadow-xl max-w-2xl w-full text-center">
@@ -40,8 +40,16 @@
             <!-- Message box for user feedback -->
             <div id="messageBox" class="hidden mt-4 p-3 bg-yellow-100 border border-yellow-300 text-yellow-800 rounded-lg text-sm" role="alert"></div>
         </div>
+
+        <!-- All Quotes List Section -->
+        <div id="allQuotesListSection" class="mt-10 pt-8 border-t-2 border-gray-200">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">All Available Quotes</h2>
+            <div id="quotesContainer" class="space-y-4">
+                <!-- Dynamically added quotes will appear here -->
+            </div>
+        </div>
     </div>
 
-    <script src="scripts.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>

@@ -300,7 +300,6 @@ async function postQuotesToServer(data) {
     }
 }
 
-// Renamed syncData to syncQuotes
 async function syncQuotes() {
     syncStatus.textContent = "Status: Syncing...";
     try {
@@ -308,6 +307,7 @@ async function syncQuotes() {
         const localQuotesJson = JSON.stringify(quotes.sort((a, b) => a.text.localeCompare(b.text)));
         const serverQuotesJson = JSON.stringify(serverQuotes.sort((a, b) => a.text.localeCompare(b.text)));
 
+        let syncHappened = false;
         if (serverQuotes.length > 0 && localQuotesJson !== serverQuotesJson) {
             conflictNotification.classList.add('hidden');
             updateNotification.classList.remove('hidden');
@@ -318,20 +318,22 @@ async function syncQuotes() {
             populateCategories();
             showRandomQuote();
             filterQuotes();
-            showMessage("Data synchronized with server. Latest data applied.", 'info');
-
+            syncHappened = true;
         } else if (serverQuotes.length === 0) {
              showMessage("No quotes fetched from server. Keeping local data.", 'warning');
-        }
-         else {
+        } else {
             conflictNotification.classList.add('hidden');
             updateNotification.classList.add('hidden');
+            // If the code reaches here, it means serverQuotes.length > 0 and data is identical
             showMessage("Quotes are already in sync with the server.", 'info');
         }
 
         await postQuotesToServer(quotes);
 
         syncStatus.textContent = `Status: Last synced: ${new Date().toLocaleTimeString()}`;
+        if (syncHappened) {
+            showMessage("Quotes synchronized successfully!", 'success'); // Unified success message
+        }
     } catch (error) {
         console.error("Error during sync:", error);
         syncStatus.textContent = "Status: Sync Failed!";
@@ -339,9 +341,8 @@ async function syncQuotes() {
     }
 }
 
-
 function resolveConflict() {
-    syncQuotes(); // Call syncQuotes
+    syncQuotes();
     conflictNotification.classList.add('hidden');
 }
 
@@ -358,7 +359,7 @@ newQuoteButton.addEventListener('click', showRandomQuote);
 exportQuotesButton.addEventListener('click', exportQuotesToJson);
 importFileInput.addEventListener('change', importFromJsonFile);
 categoryFilter.addEventListener('change', filterQuotes);
-syncNowButton.addEventListener('click', syncQuotes); // Call syncQuotes
+syncNowButton.addEventListener('click', syncQuotes);
 resolveConflictButton.addEventListener('click', resolveConflict);
 dismissUpdateButton.addEventListener('click', dismissUpdate);
 
@@ -376,8 +377,8 @@ document.addEventListener('DOMContentLoaded', () => {
     updateLastViewedQuoteDisplay();
 
     // Initial sync on load
-    syncQuotes(); // Call syncQuotes
+    syncQuotes();
 
     // Periodic sync every 30 seconds (adjust as needed)
-    setInterval(syncQuotes, 30000); // Call syncQuotes
+    setInterval(syncQuotes, 30000);
 });

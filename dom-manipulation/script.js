@@ -16,7 +16,7 @@ const addQuoteButton = document.getElementById('addQuoteBtn');
 const messageBox = document.getElementById('messageBox');
 
 function showMessage(message, type = 'info') {
-    messageBox.textContent = message;
+    messageBox.innerHTML = message; // Changed to innerHTML
     messageBox.classList.remove('hidden', 'bg-green-100', 'border-green-300', 'text-green-800', 'bg-red-100', 'border-red-300', 'text-red-800', 'bg-yellow-100', 'border-yellow-300', 'text-yellow-800');
     messageBox.classList.add('block');
 
@@ -41,15 +41,15 @@ function showMessage(message, type = 'info') {
 
 function showRandomQuote() {
     if (quotes.length === 0) {
-        quoteText.textContent = "No quotes available. Add some!";
-        quoteCategory.textContent = "";
+        quoteText.innerHTML = "No quotes available. Add some!"; // Changed to innerHTML
+        quoteCategory.innerHTML = ""; // Changed to innerHTML
         return;
     }
     const randomIndex = Math.floor(Math.random() * quotes.length);
     const randomQuote = quotes[randomIndex];
 
-    quoteText.textContent = `"${randomQuote.text}"`;
-    quoteCategory.textContent = `- ${randomQuote.category}`;
+    quoteText.innerHTML = `"${randomQuote.text}"`; // Changed to innerHTML
+    quoteCategory.innerHTML = `- ${randomQuote.category}`; // Changed to innerHTML
 }
 
 function addQuote() {

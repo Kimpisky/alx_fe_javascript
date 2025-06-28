@@ -278,17 +278,12 @@ async function fetchQuotesFromServer() {
 async function postQuotesToServer(data) {
     const apiUrl = 'https://jsonplaceholder.typicode.com/posts';
     try {
-        // For JSONPlaceholder, we typically send an object representing a single post
-        // Since we're sending our entire local 'quotes' array,
-        // we'll simulate sending one aggregated "report" or just the first quote.
-        // For a true "sync" that updates individual items, a real API is needed.
-        // Here, we just demonstrate a POST request.
         const response = await fetch(apiUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 title: "Local Quotes Update",
-                body: JSON.stringify(data.slice(0, 5)), // Send a small part to simulate content
+                body: JSON.stringify(data.slice(0, 5)),
                 userId: 1
             })
         });
@@ -305,7 +300,8 @@ async function postQuotesToServer(data) {
     }
 }
 
-async function syncData() {
+// Renamed syncData to syncQuotes
+async function syncQuotes() {
     syncStatus.textContent = "Status: Syncing...";
     try {
         const serverQuotes = await fetchQuotesFromServer();
@@ -313,18 +309,12 @@ async function syncData() {
         const serverQuotesJson = JSON.stringify(serverQuotes.sort((a, b) => a.text.localeCompare(b.text)));
 
         if (serverQuotes.length > 0 && localQuotesJson !== serverQuotesJson) {
-            // Server has data and it's different from local data.
-            // In this simulation, server data from JSONPlaceholder is treated as "new updates."
-            // If local quotes have been modified/added since last sync, this will override them.
-            // This is the "server takes precedence" rule applied to a mock API.
-            conflictNotification.classList.add('hidden'); // Hide conflict as this is an update
+            conflictNotification.classList.add('hidden');
             updateNotification.classList.remove('hidden');
             updateMessage.textContent = `Fetched ${serverQuotes.length} quotes from server. Your local data will be updated.`;
 
-            // Merge server quotes with local quotes (deduplicate if needed, or simply replace)
-            // For "server takes precedence", we replace:
-            quotes = [...serverQuotes]; // Use spread to create a new array, ensuring reactivity
-            saveQuotes(); // Save the new merged data locally
+            quotes = [...serverQuotes];
+            saveQuotes();
             populateCategories();
             showRandomQuote();
             filterQuotes();
@@ -334,15 +324,12 @@ async function syncData() {
              showMessage("No quotes fetched from server. Keeping local data.", 'warning');
         }
          else {
-            // Local and server data are identical (based on filtered view from JSONPlaceholder)
             conflictNotification.classList.add('hidden');
             updateNotification.classList.add('hidden');
             showMessage("Quotes are already in sync with the server.", 'info');
         }
 
-        // Always attempt to post current local quotes state to server (simulated)
         await postQuotesToServer(quotes);
-
 
         syncStatus.textContent = `Status: Last synced: ${new Date().toLocaleTimeString()}`;
     } catch (error) {
@@ -354,9 +341,7 @@ async function syncData() {
 
 
 function resolveConflict() {
-    // For this simulation, "resolve" means forcing a re-sync where server data overrides.
-    // In a real app, this might involve user choices or more complex merge logic.
-    syncData();
+    syncQuotes(); // Call syncQuotes
     conflictNotification.classList.add('hidden');
 }
 
@@ -373,7 +358,7 @@ newQuoteButton.addEventListener('click', showRandomQuote);
 exportQuotesButton.addEventListener('click', exportQuotesToJson);
 importFileInput.addEventListener('change', importFromJsonFile);
 categoryFilter.addEventListener('change', filterQuotes);
-syncNowButton.addEventListener('click', syncData);
+syncNowButton.addEventListener('click', syncQuotes); // Call syncQuotes
 resolveConflictButton.addEventListener('click', resolveConflict);
 dismissUpdateButton.addEventListener('click', dismissUpdate);
 
@@ -391,8 +376,8 @@ document.addEventListener('DOMContentLoaded', () => {
     updateLastViewedQuoteDisplay();
 
     // Initial sync on load
-    syncData();
+    syncQuotes(); // Call syncQuotes
 
     // Periodic sync every 30 seconds (adjust as needed)
-    setInterval(syncData, 30000);
+    setInterval(syncQuotes, 30000); // Call syncQuotes
 });

@@ -41,6 +41,25 @@
             <div id="messageBox" class="hidden mt-4 p-3 bg-yellow-100 border border-yellow-300 text-yellow-800 rounded-lg text-sm" role="alert"></div>
         </div>
 
+        <!-- Import/Export and Session Storage Section -->
+        <div class="mt-10 pt-8 border-t-2 border-gray-200">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Manage Your Quotes</h2>
+            <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4 mb-8">
+                <button id="exportQuotesBtn" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-full shadow-lg text-lg focus:outline-none focus:ring-4 focus:ring-purple-300">
+                    Export Quotes (JSON)
+                </button>
+                <label for="importFile" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-full shadow-lg text-lg cursor-pointer flex items-center justify-center focus:outline-none focus:ring-4 focus:ring-indigo-300">
+                    Import Quotes (JSON)
+                    <input type="file" id="importFile" accept=".json" class="hidden" />
+                </label>
+            </div>
+            <!-- Session Storage Display -->
+            <div id="sessionStorageDisplay" class="mt-6 p-4 bg-gray-100 rounded-lg text-gray-700 text-sm">
+                Last viewed quote (session): <span id="lastViewedQuote">None</span>
+            </div>
+        </div>
+
+
         <!-- All Quotes List Section -->
         <div id="allQuotesListSection" class="mt-10 pt-8 border-t-2 border-gray-200">
             <h2 class="text-2xl font-bold text-gray-800 mb-6">All Available Quotes</h2>

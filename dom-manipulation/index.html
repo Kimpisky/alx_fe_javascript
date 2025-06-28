@@ -68,6 +68,31 @@
             </select>
         </div>
 
+        <!-- Server Sync and Conflict Resolution Section -->
+        <div class="mt-10 pt-8 border-t-2 border-gray-200">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Server Sync & Conflicts</h2>
+            <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4 mb-4">
+                <button id="syncNowBtn" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-full shadow-lg text-lg focus:outline-none focus:ring-4 focus:ring-orange-300">
+                    Sync Now
+                </button>
+                <p id="syncStatus" class="text-gray-600 text-sm italic">Status: Idle</p>
+            </div>
+            <div id="conflictNotification" class="hidden mt-4 p-4 bg-red-100 border border-red-300 text-red-800 rounded-lg text-base" role="alert">
+                <p class="font-bold mb-2">Conflict Detected!</p>
+                <p id="conflictMessage"></p>
+                <button id="resolveConflictBtn" class="mt-3 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full text-sm focus:outline-none focus:ring-4 focus:ring-red-300">
+                    Resolve (Server takes precedence)
+                </button>
+            </div>
+            <div id="updateNotification" class="hidden mt-4 p-4 bg-blue-100 border border-blue-300 text-blue-800 rounded-lg text-base" role="alert">
+                <p class="font-bold mb-2">Data Updated!</p>
+                <p id="updateMessage"></p>
+                <button id="dismissUpdateBtn" class="mt-3 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full text-sm focus:outline-none focus:ring-4 focus:ring-blue-300">
+                    Dismiss
+                </button>
+            </div>
+        </div>
+
         <!-- All Quotes List Section -->
         <div id="allQuotesListSection" class="mt-10 pt-8 border-t-2 border-gray-200">
             <h2 class="text-2xl font-bold text-gray-800 mb-6">All Available Quotes</h2>

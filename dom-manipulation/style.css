@@ -1,0 +1,79 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+/* Global box-sizing for consistent layout behavior */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    transition: background-color 0.3s ease;
+    /* Ensure the body takes at least the full viewport height */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem; /* Ensure padding on small screens */
+}
+
+/* Keyframes for a subtle fade-in animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Apply fade-in animation to the main content container */
+body > div { /* Targeting the main div wrapping the content */
+    animation: fadeIn 0.8s ease-out forwards;
+    opacity: 0; /* Start invisible for animation */
+    animation-delay: 0.2s; /* Slight delay for a smoother load */
+}
+
+.quote-card {
+    transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+}
+
+.quote-card:hover {
+    transform: translateY(-8px); /* More pronounced lift */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2); /* Stronger, softer shadow */
+}
+
+button {
+    transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out, box-shadow 0.2s ease-in-out;
+    position: relative;
+    overflow: hidden; /* For potential future effects like ripple */
+}
+
+button:hover {
+    transform: translateY(-2px); /* Slightly more lift on hover */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15); /* Add subtle shadow on hover */
+}
+
+button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Slight press effect */
+}
+
+/* Style for input fields for consistency, though Tailwind handles most */
+input[type="text"] {
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+input[type="text"]:focus {
+    outline: none; /* Remove default outline */
+    border-color: #60A5FA; /* A subtle blue border on focus */
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.3); /* Ring effect on focus */
+}
+
+/* Style for message box to make it more visually distinct */
+#messageBox {
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+    /* Tailwind classes handle color, border, etc., but ensure smooth transition */
+}

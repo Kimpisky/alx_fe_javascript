@@ -16,7 +16,7 @@ const addQuoteButton = document.getElementById('addQuoteBtn');
 const messageBox = document.getElementById('messageBox');
 
 function showMessage(message, type = 'info') {
-    messageBox.innerHTML = message; // Changed to innerHTML
+    messageBox.innerHTML = message;
     messageBox.classList.remove('hidden', 'bg-green-100', 'border-green-300', 'text-green-800', 'bg-red-100', 'border-red-300', 'text-red-800', 'bg-yellow-100', 'border-yellow-300', 'text-yellow-800');
     messageBox.classList.add('block');
 
@@ -41,15 +41,15 @@ function showMessage(message, type = 'info') {
 
 function showRandomQuote() {
     if (quotes.length === 0) {
-        quoteText.innerHTML = "No quotes available. Add some!"; // Changed to innerHTML
-        quoteCategory.innerHTML = ""; // Changed to innerHTML
+        quoteText.innerHTML = "No quotes available. Add some!";
+        quoteCategory.innerHTML = "";
         return;
     }
     const randomIndex = Math.floor(Math.random() * quotes.length);
     const randomQuote = quotes[randomIndex];
 
-    quoteText.innerHTML = `"${randomQuote.text}"`; // Changed to innerHTML
-    quoteCategory.innerHTML = `- ${randomQuote.category}`; // Changed to innerHTML
+    quoteText.innerHTML = `"${randomQuote.text}"`;
+    quoteCategory.innerHTML = `- ${randomQuote.category}`;
 }
 
 function addQuote() {
@@ -75,7 +75,16 @@ function addQuote() {
     showRandomQuote();
 }
 
-newQuoteButton.addEventListener('click', showRandomQuote);
-addQuoteButton.addEventListener('click', addQuote);
+/**
+ * Initializes the "Add Quote" form functionality by attaching event listeners.
+ */
+function createAddQuoteForm() {
+    addQuoteButton.addEventListener('click', addQuote);
+}
 
-document.addEventListener('DOMContentLoaded', showRandomQuote);
+newQuoteButton.addEventListener('click', showRandomQuote);
+
+document.addEventListener('DOMContentLoaded', () => {
+    showRandomQuote();
+    createAddQuoteForm(); // Call the new function to set up the form listener
+});

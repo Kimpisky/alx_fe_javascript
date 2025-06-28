@@ -14,22 +14,14 @@ const exportQuotesButton = document.getElementById('exportQuotesBtn');
 const importFileInput = document.getElementById('importFile');
 const lastViewedQuoteSpan = document.getElementById('lastViewedQuote');
 const categoryFilter = document.getElementById('categoryFilter');
-const syncNowButton = document.getElementById('syncNowBtn'); // New
-const syncStatus = document.getElementById('syncStatus');     // New
-const conflictNotification = document.getElementById('conflictNotification'); // New
-const conflictMessage = document.getElementById('conflictMessage');           // New
-const resolveConflictButton = document.getElementById('resolveConflictBtn');   // New
-const updateNotification = document.getElementById('updateNotification');     // New
-const updateMessage = document.getElementById('updateMessage');               // New
-const dismissUpdateButton = document.getElementById('dismissUpdateBtn');     // New
-
-// Simulated Server Data (in-memory for demonstration)
-let mockServerQuotes = [
-    { text: "Server: Embrace the glorious mess that you are.", category: "Self-Love" },
-    { text: "Server: The only limit to our realization of tomorrow will be our doubts of today.", category: "Inspiration" },
-    { text: "Server: Innovation distinguishes between a leader and a follower.", category: "Business" },
-    { text: "Server: Believe you can and you're halfway there.", category: "Motivation" }
-];
+const syncNowButton = document.getElementById('syncNowBtn');
+const syncStatus = document.getElementById('syncStatus');
+const conflictNotification = document.getElementById('conflictNotification');
+const conflictMessage = document.getElementById('conflictMessage');
+const resolveConflictButton = document.getElementById('resolveConflictBtn');
+const updateNotification = document.getElementById('updateNotification');
+const updateMessage = document.getElementById('updateMessage');
+const dismissUpdateButton = document.getElementById('dismissUpdateBtn');
 
 // Helper to show general messages
 function showMessage(message, type = 'info') {
@@ -261,72 +253,96 @@ function importFromJsonFile(event) {
 
 // Server Sync and Conflict Resolution Functions
 
-// Simulate fetching quotes from a server
+// Simulate fetching quotes from a server using JSONPlaceholder
 async function fetchQuotesFromServer() {
-    // In a real application, this would be a fetch call to your backend:
-    // const response = await fetch('/api/quotes');
-    // const serverData = await response.json();
-    // For now, simulate with a delay
-    return new Promise(resolve => {
-        setTimeout(() => {
-            resolve([...mockServerQuotes]); // Return a copy to prevent direct modification
-        }, 1000); // Simulate network delay
-    });
+    const apiUrl = 'https://jsonplaceholder.typicode.com/posts?_limit=10'; // Fetch a limited number of posts
+    try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const serverData = await response.json();
+        // Map JSONPlaceholder posts to our quote format
+        return serverData.map(post => ({
+            text: post.title, // Using title as quote text
+            category: 'JSONPlaceholder' // Assign a generic category
+        }));
+    } catch (error) {
+        console.error("Error fetching quotes from server:", error);
+        showMessage("Could not fetch quotes from server.", 'error');
+        return []; // Return empty array on error
+    }
 }
 
-// Simulate posting quotes to a server
+// Simulate posting quotes to a server using JSONPlaceholder
 async function postQuotesToServer(data) {
-    // In a real application, this would be a fetch call:
-    // const response = await fetch('/api/quotes', {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify(data)
-    // });
-    // const result = await response.json();
-    // For now, update mock server data and simulate with a delay
-    return new Promise(resolve => {
-        setTimeout(() => {
-            mockServerQuotes = [...data]; // Server data updated
-            resolve({ success: true, message: 'Data synced to server successfully!' });
-        }, 1000); // Simulate network delay
-    });
+    const apiUrl = 'https://jsonplaceholder.typicode.com/posts';
+    try {
+        // For JSONPlaceholder, we typically send an object representing a single post
+        // Since we're sending our entire local 'quotes' array,
+        // we'll simulate sending one aggregated "report" or just the first quote.
+        // For a true "sync" that updates individual items, a real API is needed.
+        // Here, we just demonstrate a POST request.
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                title: "Local Quotes Update",
+                body: JSON.stringify(data.slice(0, 5)), // Send a small part to simulate content
+                userId: 1
+            })
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const result = await response.json();
+        console.log("Simulated server post response:", result);
+        return { success: true, message: 'Data simulated to be synced to server!' };
+    } catch (error) {
+        console.error("Error posting quotes to server:", error);
+        showMessage("Could not post quotes to server (simulated).", 'error');
+        return { success: false, message: 'Simulated post failed.' };
+    }
 }
 
 async function syncData() {
     syncStatus.textContent = "Status: Syncing...";
     try {
         const serverQuotes = await fetchQuotesFromServer();
-        const localQuotesString = JSON.stringify(quotes.sort((a, b) => a.text.localeCompare(b.text))); // Sort for consistent comparison
-        const serverQuotesString = JSON.stringify(serverQuotes.sort((a, b) => a.text.localeCompare(b.text)));
+        const localQuotesJson = JSON.stringify(quotes.sort((a, b) => a.text.localeCompare(b.text)));
+        const serverQuotesJson = JSON.stringify(serverQuotes.sort((a, b) => a.text.localeCompare(b.text)));
 
-        if (localQuotesString !== serverQuotesString) {
-            // Conflict or update detected
-            if (quotes.length > 0 && JSON.stringify(quotes) !== JSON.stringify(serverQuotes)) {
-                // Potential conflict or server has updates
-                conflictNotification.classList.remove('hidden');
-                conflictMessage.textContent = "Your local data differs from the server's. Server data will take precedence.";
-                updateNotification.classList.add('hidden'); // Hide update if conflict exists
-            } else {
-                // Server has new data, but no local changes or local is subset of server
-                updateNotification.classList.remove('hidden');
-                updateMessage.textContent = "New quotes fetched from the server and updated locally.";
-                conflictNotification.classList.add('hidden'); // Hide conflict if update exists
-            }
-            quotes = serverQuotes; // Server data takes precedence
-            saveQuotes();
+        if (serverQuotes.length > 0 && localQuotesJson !== serverQuotesJson) {
+            // Server has data and it's different from local data.
+            // In this simulation, server data from JSONPlaceholder is treated as "new updates."
+            // If local quotes have been modified/added since last sync, this will override them.
+            // This is the "server takes precedence" rule applied to a mock API.
+            conflictNotification.classList.add('hidden'); // Hide conflict as this is an update
+            updateNotification.classList.remove('hidden');
+            updateMessage.textContent = `Fetched ${serverQuotes.length} quotes from server. Your local data will be updated.`;
+
+            // Merge server quotes with local quotes (deduplicate if needed, or simply replace)
+            // For "server takes precedence", we replace:
+            quotes = [...serverQuotes]; // Use spread to create a new array, ensuring reactivity
+            saveQuotes(); // Save the new merged data locally
             populateCategories();
             showRandomQuote();
             filterQuotes();
             showMessage("Data synchronized with server. Latest data applied.", 'info');
-        } else {
-            // No changes, or changes are identical
+
+        } else if (serverQuotes.length === 0) {
+             showMessage("No quotes fetched from server. Keeping local data.", 'warning');
+        }
+         else {
+            // Local and server data are identical (based on filtered view from JSONPlaceholder)
             conflictNotification.classList.add('hidden');
             updateNotification.classList.add('hidden');
             showMessage("Quotes are already in sync with the server.", 'info');
         }
 
-        // Always attempt to post local quotes to server to simulate continuous sync
+        // Always attempt to post current local quotes state to server (simulated)
         await postQuotesToServer(quotes);
+
 
         syncStatus.textContent = `Status: Last synced: ${new Date().toLocaleTimeString()}`;
     } catch (error) {
@@ -336,14 +352,16 @@ async function syncData() {
     }
 }
 
+
 function resolveConflict() {
-    // When "Resolve" is clicked, we simply re-run syncData, which applies server precedence
+    // For this simulation, "resolve" means forcing a re-sync where server data overrides.
+    // In a real app, this might involve user choices or more complex merge logic.
     syncData();
-    conflictNotification.classList.add('hidden'); // Hide the notification
+    conflictNotification.classList.add('hidden');
 }
 
 function dismissUpdate() {
-    updateNotification.classList.add('hidden'); // Hide the notification
+    updateNotification.classList.add('hidden');
 }
 
 function createAddQuoteForm() {
@@ -355,9 +373,9 @@ newQuoteButton.addEventListener('click', showRandomQuote);
 exportQuotesButton.addEventListener('click', exportQuotesToJson);
 importFileInput.addEventListener('change', importFromJsonFile);
 categoryFilter.addEventListener('change', filterQuotes);
-syncNowButton.addEventListener('click', syncData); // New: Sync Now button
-resolveConflictButton.addEventListener('click', resolveConflict); // New: Resolve button
-dismissUpdateButton.addEventListener('click', dismissUpdate); // New: Dismiss update button
+syncNowButton.addEventListener('click', syncData);
+resolveConflictButton.addEventListener('click', resolveConflict);
+dismissUpdateButton.addEventListener('click', dismissUpdate);
 
 // Initial Load and Periodic Sync
 document.addEventListener('DOMContentLoaded', () => {

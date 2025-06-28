@@ -23,7 +23,7 @@ const updateNotification = document.getElementById('updateNotification');
 const updateMessage = document.getElementById('updateMessage');
 const dismissUpdateButton = document.getElementById('dismissUpdateBtn');
 
-// Helper to show general messages
+// Helper to show general messages (still used for some non-critical messages)
 function showMessage(message, type = 'info') {
     messageBox.textContent = message;
     messageBox.classList.remove('hidden', 'bg-green-100', 'border-green-300', 'text-green-800', 'bg-red-100', 'border-red-300', 'text-red-800', 'bg-yellow-100', 'border-yellow-300', 'text-yellow-800');
@@ -219,7 +219,7 @@ function exportQuotesToJson() {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    showMessage("Quotes exported successfully!", 'success');
+    alert("Quotes exported successfully!"); // Changed to alert()
 }
 
 function importFromJsonFile(event) {
@@ -236,7 +236,7 @@ function importFromJsonFile(event) {
             if (Array.isArray(importedQuotes) && importedQuotes.every(q => typeof q.text === 'string' && typeof q.category === 'string')) {
                 quotes.push(...importedQuotes);
                 saveQuotes();
-                showMessage('Quotes imported successfully!', 'success');
+                alert('Quotes imported successfully!'); // Changed to alert()
                 populateCategories();
                 showRandomQuote();
                 filterQuotes();
@@ -324,7 +324,6 @@ async function syncQuotes() {
         } else {
             conflictNotification.classList.add('hidden');
             updateNotification.classList.add('hidden');
-            // If the code reaches here, it means serverQuotes.length > 0 and data is identical
             showMessage("Quotes are already in sync with the server.", 'info');
         }
 
@@ -332,7 +331,7 @@ async function syncQuotes() {
 
         syncStatus.textContent = `Status: Last synced: ${new Date().toLocaleTimeString()}`;
         if (syncHappened) {
-            showMessage("Quotes synced with server!", 'success'); // Changed to the requested phrase
+            alert("Quotes synced with server!"); // Changed to alert()
         }
     } catch (error) {
         console.error("Error during sync:", error);

@@ -332,7 +332,7 @@ async function syncQuotes() {
 
         syncStatus.textContent = `Status: Last synced: ${new Date().toLocaleTimeString()}`;
         if (syncHappened) {
-            showMessage("Quotes synchronized successfully!", 'success'); // Unified success message
+            showMessage("Quotes synced with server!", 'success'); // Changed to the requested phrase
         }
     } catch (error) {
         console.error("Error during sync:", error);
